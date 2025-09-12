@@ -1,0 +1,16 @@
+#include <stdio.h>
+#include <windows.h>
+int main() {
+    HANDLE readPipe, writePipe;
+    SECURITY_ATTRIBUTES sa = { sizeof(SECURITY_ATTRIBUTES), NULL, TRUE };
+    char message[] = "Hello from parent!";
+    char buffer[50];
+    DWORD written, read;
+    if (!CreatePipe(&readPipe, &writePipe, &sa, 0)) return 1;
+    WriteFile(writePipe, message, sizeof(message), &written, NULL);
+    ReadFile(readPipe, buffer, sizeof(buffer), &read, NULL);
+    printf("Child received: %s\n", buffer);
+    CloseHandle(readPipe);
+    CloseHandle(writePipe);
+    return 0;
+}
