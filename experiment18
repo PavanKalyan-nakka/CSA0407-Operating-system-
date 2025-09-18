@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdlib.h>
+typedef struct { int id; char name[20]; float salary; } Employee;
+
+int main() {
+    FILE *fp = fopen("emp.dat","rb+");
+    if(!fp) fp=fopen("emp.dat","wb+");
+    int choice; Employee e; long pos;
+
+    while(1){
+        printf("\n1.Add 2.Display 3.Modify 4.Exit: "); scanf("%d",&choice);
+        switch(choice){
+            case 1:
+                printf("ID Name Salary: "); scanf("%d %s %f",&e.id,e.name,&e.salary);
+                fseek(fp,0,SEEK_END); fwrite(&e,sizeof(Employee),1,fp); break;
+            case 2:
+                rewind(fp); printf("\nID\tName\tSalary\n");
+                while(fread(&e,sizeof(Employee),1,fp)) printf("%d\t%s\t%.2f\n",e.id,e.name,e.salary); break;
+            case 3:
+                printf("ID to modify: "); int id; scanf("%d",&id);
+                rewind(fp);
+                while(fread(&e,sizeof(Employee),1,fp)){
+                    if(e.id==id){ pos=ftell(fp)-sizeof(Employee);
+                        printf("New Name Salary: "); scanf("%s %f",e.name,&e.salary);
+                        fseek(fp,pos,SEEK_SET); fwrite(&e,sizeof(Employee),1,fp); break;
+                    }
+                } break;
+            case 4: fclose(fp); exit(0);
+        }
+    }
+}
